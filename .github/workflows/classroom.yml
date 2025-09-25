@@ -1,0 +1,113 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        pip install pylint
+    - name: Coding Style
+      id: coding-style
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Coding Style
+        setup-command: ''
+        command: "pylint hand.py"
+        timeout: 10
+        max-score: 4
+    - name: test_deck_init
+      id: test_deck_init
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_init
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_init"
+        timeout: 10
+        max-score: 0
+    - name: test_deck_str
+      id: test_deck_str
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_str
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_str"
+        timeout: 10
+        max-score: 0
+    - name: test_deck_repr
+      id: test_deck_repr
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_repr
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_repr"
+        timeout: 10
+        max-score: 0
+    - name: test_deck_build
+      id: test_deck_build
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_build
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_build"
+        timeout: 10
+        max-score: 0
+    - name: test_deck_shuffle
+      id: test_deck_shuffle
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_shuffle
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_shuffle"
+        timeout: 10
+        max-score: 3
+    - name: test_deck_draw
+      id: test_deck_draw
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_draw
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_draw"
+        timeout: 10
+        max-score: 3
+    - name: test_deck_reset
+      id: test_deck_reset
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_reset
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_reset"
+        timeout: 10
+        max-score: 0
+    - name: test_deck_deal
+      id: test_deck_deal
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_deck_deal
+        setup-command: ''
+        command: "python -m unittest deck_autotest.TestDeck.test_deal"
+        timeout: 10
+        max-score: 15
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CODING-STYLE_RESULTS: "${{steps.coding-style.outputs.result}}"
+        TEST_DECK_INIT_RESULTS: "${{steps.test_deck_init.outputs.result}}"
+        TEST_DECK_STR_RESULTS: "${{steps.test_deck_str.outputs.result}}"
+        TEST_DECK_REPR_RESULTS: "${{steps.test_deck_repr.outputs.result}}"
+        TEST_DECK_BUILD_RESULTS: "${{steps.test_deck_build.outputs.result}}"
+        TEST_DECK_SHUFFLE_RESULTS: "${{steps.test_deck_shuffle.outputs.result}}"
+        TEST_DECK_DRAW_RESULTS: "${{steps.test_deck_draw.outputs.result}}"
+        TEST_DECK_RESET_RESULTS: "${{steps.test_deck_reset.outputs.result}}"
+        TEST_DECK_DEAL_RESULTS: "${{steps.test_deck_deal.outputs.result}}"
+      with:
+        runners: coding-style,test_deck_init,test_deck_str,test_deck_repr,test_deck_build,test_deck_shuffle,test_deck_draw,test_deck_reset,test_deck_deal
